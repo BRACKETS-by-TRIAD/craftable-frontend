@@ -28,6 +28,10 @@ const BaseForm = {
                 return {};
             }
         },
+        'responsiveBreakpoint': {
+            type: Number,
+            default: 850
+        }
     },
 
     created: function() {
@@ -38,13 +42,15 @@ const BaseForm = {
             //         _.set(form, l, {})
             //     }
             // })
-            this.currentLocale = this.otherLocales[0];
+            this.currentLocale = this.defaultLocale;
         }
 
         //FIXME: now we can't add dynamic input in update type of form
         if (!_.isEmpty(this.data)) {
             this.form = this.data;
         }
+
+        window.addEventListener('resize', this.onResize);
     },
 
     data: function() {
@@ -52,8 +58,9 @@ const BaseForm = {
             form: {},
             mediaCollections: [],
             isFormLocalized: false,
-            currentLocale: 'sk',
-	        submiting: false,
+            currentLocale: '',
+            submiting: false,
+            onSmallScreen: window.innerWidth < this.responsiveBreakpoint,
             datePickerConfig: {
                 dateFormat: 'Y-m-d H:i:S',
                 altInput: true,
@@ -103,9 +110,10 @@ const BaseForm = {
             return this.locales.filter(x => x != this.defaultLocale);
         },
         showLocalizedValidationError: function() {
+            // TODO ked sme neni na mobile, tak pozerat zo vsetkych
             return this.otherLocales.some(lang => {
                 return this.errors.items.some(item => {
-                    return item.field.endsWith('_'+lang);
+                    return item.field.endsWith('_'+lang) || item.field.startsWith(lang+'_');
                 });
             });
         }
@@ -120,15 +128,13 @@ const BaseForm = {
                     }
 
                     if(this.$refs[collection+'_uploader']) {
-                         this.form[collection] = this.$refs[collection+'_uploader'].getFiles(); 
-                    }  
+                        this.form[collection] = this.$refs[collection+'_uploader'].getFiles();
+                    }
                 });
             }
 
             return this.form;
         },
-
-
         onSubmit() {
             return this.$validator.validateAll()
                 .then(result => {
@@ -142,7 +148,7 @@ const BaseForm = {
                         data = _.omit(this.form, this.locales.filter(locale => _.isEmpty(this.form[locale])));
                     }
 
-			        this.submiting = true;
+                    this.submiting = true;
 
                     axios.post(this.action, this.getPostData())
                         .then(response => this.onSuccess(response.data))
@@ -150,13 +156,13 @@ const BaseForm = {
                 });
         },
         onSuccess(data) {
-	        this.submiting = false;
+            this.submiting = false;
             if (data.redirect) {
                 window.location.replace(data.redirect)
             }
         },
         onFail(errors) {
-	        this.submiting = false;
+            this.submiting = false;
             var bag = this.$validator.errors;
             Object.keys(errors).map(function(key) {
                 var splitted = key.split('.', 2);
@@ -177,6 +183,7 @@ const BaseForm = {
         },
         showLocalization() {
             this.isFormLocalized = true;
+            this.currentLocale = this.otherLocales[0];
             $('.container-xl').addClass('width-auto');
         },
         hideLocalization() {
@@ -185,6 +192,18 @@ const BaseForm = {
         },
         validate(event) {
             this.$validator.errors.remove(event.target.name);
+        },
+        shouldShowLangGroup(locale) {
+            if (!this.onSmallScreen) {
+                if(this.defaultLocale == locale) return true;
+
+                return this.isFormLocalized && this.currentLocale == locale;
+            } else {
+                return this.currentLocale == locale;
+            }
+        },
+        onResize() {
+            this.onSmallScreen = window.innerWidth < this.responsiveBreakpoint;
         }
     }
 };

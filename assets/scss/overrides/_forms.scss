@@ -15,11 +15,11 @@
 }
 
 .has-success .form-control {
-  background-image: url('../../../coreui/img/correct.png');
+  background-image: url('../coreui/img/correct.png');
 }
 
 .has-danger .form-control {
-  background-image: url('../../../coreui/img/error.png');
+  background-image: url('../coreui/img/error.png');
   border-color: $danger;
 }
 
@@ -68,12 +68,12 @@ label {
 
 .input-icon--mail {
   width: 20px;
-  background-image: url('../../../coreui/img/envelope.png');
+  background-image: url('../coreui/img/envelope.png');
 }
 
 .input-icon--lock {
   margin: 0 3px;
-  background-image: url('../../../coreui/img/lock.png');
+  background-image: url('../coreui/img/lock.png');
 }
 
 .form-control::placeholder {
@@ -116,7 +116,7 @@ small select {
 
 .vue-dropzone.dropzone {
   border: 1px solid $mutedText !important;
-  
+
   i {
     color: #c7c7c7 !important;
     font-size: 40px !important;
@@ -126,29 +126,29 @@ small select {
   .dz-message {
     color: $mutedText !important;
   }
-  
+
   //fixes https://github.com/rowanwins/vue-dropzone/issues/127
-  .dz-error-message { 
-    top: calc(100% + 10px) !important; 
-    left: calc(50% - 70px) !important; 
-  } 
+  .dz-error-message {
+    top: calc(100% + 10px) !important;
+    left: calc(50% - 70px) !important;
+  }
 
   .dz-preview {
-    .dz-image { 
+    .dz-image {
       width: 200px !important;
       height: 200px !important;
 
       img {
-        width: 100%; 
-        height: 100%; 
-        -webkit-object-fit: cover; 
+        width: 100%;
+        height: 100%;
+        -webkit-object-fit: cover;
         object-fit: cover;
       }
 
       i {
-        width: 100%; 
+        width: 100%;
         height: 100%;
-        line-height: 200px; 
+        line-height: 200px;
         font-size: 70px !important;
         text-align: center;
         margin-bottom: 10px;
@@ -177,18 +177,51 @@ small select {
         }
       }
     }
-    
+
     //fixes https://github.com/rowanwins/vue-dropzone/issues/127
-    .dz-error-mark { 
-      text-align: center; 
+    .dz-error-mark {
+      text-align: center;
       top: 25%!important;
     }
   }
 }
 
+.language-mobile {
+  select {
+    margin-left: 0;
+    margin-top: 5px;
+    margin-bottom: 25px;
+  }
+  span, a {
+    display: none;
+  }
+  &.has-error {
+    small {
+      color: $danger;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  select,
+  textarea,
+  input,
+  .ql-editor,
+  .input-group button {
+    font-size: 16px !important;
+  }
+}
+
+
 @media (min-width: 576px) {
   .control-label {
     margin-top: 7px;
+  }
+  .language-mobile {
+    select {
+      margin: 0;
+      margin-left: 10px;
+    }
   }
 }
 

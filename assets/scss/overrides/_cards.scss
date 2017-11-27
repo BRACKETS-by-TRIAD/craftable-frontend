@@ -57,6 +57,12 @@
     }
 }
 
+@media (max-width: 767px) {
+    .card-block .card-header {
+        padding-left: 0;
+    }
+}
+
 @media (max-width: 450px) {
     .card-header>.btn.pull-right {
         display: block;
