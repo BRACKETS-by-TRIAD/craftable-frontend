@@ -1,3 +1,4 @@
+// Write (or import) your styles here
 .trumbowyg-editor table.table td {
   min-width: unset;
   display: table-cell;
@@ -12,6 +13,17 @@ div.trumbowyg-button-pane {
 }
 div.trumbowyg-box {
   border: 1px solid $mutedText;
+  &:after {
+    content: '';
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 10px;
+    top: 45px;
+    background-position: center;
+  }
 }
 
 div.trumbowyg-modal-box {
@@ -75,4 +87,21 @@ div.trumbowyg-dropdown button:hover, .trumbowyg-dropdown button:focus {
 
 div.trumbowyg-dropdown-table table td.active {
   background-color: $success;
+}
+
+.has-danger {
+  div.trumbowyg-box {
+    border: 1px solid $danger;
+    &:after {
+      background-image: url('../../../coreui/img/error.png');
+    }
+  }
+}
+
+.has-success {
+  div.trumbowyg-box {
+    &:after {
+      background-image: url('../../../coreui/img/error.png');
+    }
+  }
 }
