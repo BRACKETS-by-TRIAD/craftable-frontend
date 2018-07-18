@@ -1,3 +1,14 @@
+import 'trumbowyg/dist/plugins/colors/trumbowyg.colors';
+import 'trumbowyg/dist/plugins/colors/ui/trumbowyg.colors.css';
+import 'trumbowyg/dist/plugins/base64/trumbowyg.base64.min.js';
+import 'trumbowyg/dist/plugins/upload/trumbowyg.upload.js';
+import 'trumbowyg/dist/plugins/noembed/trumbowyg.noembed.js';
+import 'trumbowyg/dist/plugins/pasteembed/trumbowyg.pasteembed.js';
+import 'trumbowyg/dist/plugins/table/ui/trumbowyg.table.css';
+import 'trumbowyg/dist/plugins/table/trumbowyg.table.js';
+// import 'trumbowyg/dist/plugins/template/trumbowyg.template.js';
+import '../../overrides/trumbowyg.template';
+
 const userLanguage = document.documentElement.lang;
 
 const BaseForm = {
@@ -54,8 +65,11 @@ const BaseForm = {
     },
 
     data: function() {
+        const that = this;
+
         return {
             form: {},
+            wysiwygMedia: [],
             mediaCollections: [],
             isFormLocalized: false,
             currentLocale: '',
@@ -101,6 +115,78 @@ const BaseForm = {
                         ]
                     }
                 }
+            },
+            mediaWysiwygConfig: {
+                autogrow: true,
+                imageWidthModalEdit: true,
+                btnsDef: {
+                    image: {
+                        dropdown: ['insertImage', 'upload', 'base64'],
+                        ico: 'insertImage'
+                    },
+                    align: {
+                        dropdown: ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+                        ico: 'justifyLeft'
+                    }
+                },
+                btns: [
+                    ['formatting'],
+                    ['strong', 'em', 'del'],
+                    ['align'],
+                    ['unorderedList', 'orderedList', 'table'],
+                    ['foreColor', 'backColor'],
+                    ['link', 'noembed', 'image'],
+                    ['template'],
+                    ['fullscreen', 'viewHTML'],
+                ],
+                plugins: {
+                    upload: {
+                        // https://alex-d.github.io/Trumbowyg/documentation/plugins/#plugin-upload
+                        serverPath: '/admin/wysiwyg-media',
+                        imageWidthModalEdit: true,
+                        success(data, trumbowyg, $modal, values) {
+                            that.wysiwygMedia.push(data.mediaId);
+
+                            function getDeep(object, propertyParts) {
+                                var mainProperty = propertyParts.shift(),
+                                    otherProperties = propertyParts;
+
+                                if (object !== null) {
+                                    if (otherProperties.length === 0) {
+                                        return object[mainProperty];
+                                    }
+
+                                    if (typeof object === 'object') {
+                                        return getDeep(object[mainProperty], otherProperties);
+                                    }
+                                }
+                                return object;
+                            }
+
+                            if (!!getDeep(data, trumbowyg.o.plugins.upload.statusPropertyName.split('.'))) {
+                                var url = getDeep(data, trumbowyg.o.plugins.upload.urlPropertyName.split('.'));
+                                trumbowyg.execCmd('insertImage', url);
+                                var $img = $('img[src="' + url + '"]:not([alt])', trumbowyg.$box);
+                                $img.attr('alt', values.alt);
+                                if (trumbowyg.o.imageWidthModalEdit && parseInt(values.width) > 0) {
+                                    $img.attr({
+                                        width: values.width
+                                    });
+                                }
+                                setTimeout(function () {
+                                    trumbowyg.closeModal();
+                                }, 250);
+                                trumbowyg.$c.trigger('tbwuploadsuccess', [trumbowyg, data, url]);
+                            } else {
+                                trumbowyg.addErrorOnModalField(
+                                    $('input[type=file]', $modal),
+                                    trumbowyg.lang[data.message]
+                                );
+                                trumbowyg.$c.trigger('tbwuploaderror', [trumbowyg, data]);
+                            }
+                        }
+                    },
+                }
             }
         }
     },
@@ -132,6 +218,7 @@ const BaseForm = {
                     }
                 });
             }
+            this.form['wysiwygMedia'] = this.wysiwygMedia;
 
             return this.form;
         },
