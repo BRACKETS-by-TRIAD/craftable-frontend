@@ -141,7 +141,7 @@ const BaseForm = {
                 plugins: {
                     upload: {
                         // https://alex-d.github.io/Trumbowyg/documentation/plugins/#plugin-upload
-                        serverPath: '/wysiwyg',
+                        serverPath: '/wysiwyg-media',
                         imageWidthModalEdit: true,
                         success(data, trumbowyg, $modal, values) {
                             that.wysiwygMedia.push(data.mediaId);
