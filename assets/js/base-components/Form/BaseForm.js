@@ -1,13 +1,13 @@
-// import 'trumbowyg/dist/plugins/colors/trumbowyg.colors';
-// import 'trumbowyg/dist/plugins/colors/ui/trumbowyg.colors.css';
-// import 'trumbowyg/dist/plugins/base64/trumbowyg.base64.min.js';
-// import 'trumbowyg/dist/plugins/upload/trumbowyg.upload.js';
-// import 'trumbowyg/dist/plugins/noembed/trumbowyg.noembed.js';
-// import 'trumbowyg/dist/plugins/pasteembed/trumbowyg.pasteembed.js';
-// import 'trumbowyg/dist/plugins/table/ui/trumbowyg.table.css';
-// import 'trumbowyg/dist/plugins/table/trumbowyg.table.js';
-// // import 'trumbowyg/dist/plugins/template/trumbowyg.template.js';
-// import '../../overrides/trumbowyg.template';
+import 'trumbowyg/dist/plugins/colors/trumbowyg.colors';
+import 'trumbowyg/dist/plugins/colors/ui/trumbowyg.colors.css';
+import 'trumbowyg/dist/plugins/base64/trumbowyg.base64.min.js';
+import 'trumbowyg/dist/plugins/upload/trumbowyg.upload.js';
+import 'trumbowyg/dist/plugins/noembed/trumbowyg.noembed.js';
+import 'trumbowyg/dist/plugins/pasteembed/trumbowyg.pasteembed.js';
+import 'trumbowyg/dist/plugins/table/ui/trumbowyg.table.css';
+import 'trumbowyg/dist/plugins/table/trumbowyg.table.js';
+// import 'trumbowyg/dist/plugins/template/trumbowyg.template.js';
+import '../../overrides/trumbowyg.template';
 
 const userLanguage = document.documentElement.lang;
 
