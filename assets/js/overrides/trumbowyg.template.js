@@ -51,8 +51,7 @@
         $.each(available, function (index, template) {
             trumbowyg.addBtnDef('template_' + index, {
                 fn: function () {
-                    // trumbowyg.html(template.html + '<br>');
-                    document.execCommand('insertHTML', null, template.html + '<br>')
+                    trumbowyg.execCmd('insertHTML', template.html + '<br>');
                 },
                 hasIcon: false,
                 title: template.name
