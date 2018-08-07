@@ -10,6 +10,7 @@ import 'trumbowyg/dist/plugins/pasteembed/trumbowyg.pasteembed.js';
 import 'trumbowyg/dist/plugins/table/ui/trumbowyg.table.css';
 import 'trumbowyg/dist/plugins/table/trumbowyg.table.js';
 import '../../overrides/trumbowyg.template';
+import '../../overrides/trumbowyg.reupload';
 Vue.component('wysiwyg', VueTrumbowyg);
 
 const userLanguage = document.documentElement.lang;
@@ -189,6 +190,21 @@ const BaseForm = {
                             }
                         }
                     },
+                    reupload: {
+                        success(data, trumbowyg, $modal, values, $img) {
+                            that.wysiwygMedia.push(data.mediaId);
+
+                            $img.attr({
+                                src: data.file
+                            });
+                            trumbowyg.execCmd('insertHTML');
+                            setTimeout(function () {
+                                trumbowyg.closeModal();
+                            }, 250);
+                            var url = getDeep(data, trumbowyg.o.plugins.upload.urlPropertyName.split('.'));
+                            trumbowyg.$c.trigger('tbwuploadsuccess', [trumbowyg, data, url]);
+                        }
+                    }
                 }
             }
         }
