@@ -105,3 +105,7 @@ div.trumbowyg-dropdown-table table td.active {
     }
   }
 }
+
+.wysiwyg-noembed iframe {
+  pointer-events: none;
+}

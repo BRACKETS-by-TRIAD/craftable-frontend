@@ -11,6 +11,7 @@ import 'trumbowyg/dist/plugins/table/ui/trumbowyg.table.css';
 import 'trumbowyg/dist/plugins/table/trumbowyg.table.js';
 import '../../overrides/trumbowyg.template';
 import '../../overrides/trumbowyg.reupload';
+import '../../overrides/trumbowyg.edit-embed-template';
 Vue.component('wysiwyg', VueTrumbowyg);
 
 const userLanguage = document.documentElement.lang;
