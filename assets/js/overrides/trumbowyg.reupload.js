@@ -10,7 +10,8 @@
         langs: {
             en: {
                 reupload: 'Reupload',
-                reuploadImage: 'Reupload Image'
+                reuploadImage: 'Reupload Image',
+                description: 'Alt Text'
             }
         },
         // Add our plugin to Trumbowyg registred plugins
