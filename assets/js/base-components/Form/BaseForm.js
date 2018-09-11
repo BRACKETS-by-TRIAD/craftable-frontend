@@ -271,6 +271,7 @@ const BaseForm = {
         onFail(errors) {
             this.submiting = false;
             var bag = this.$validator.errors;
+            bag.clear();
             Object.keys(errors).map(function(key) {
                 var splitted = key.split('.', 2);
                 // we assume that first dot divides column and locale (TODO maybe refactor this and make it more general)
