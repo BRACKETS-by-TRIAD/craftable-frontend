@@ -2,7 +2,7 @@
   "name": "craftable",
   "version": "1.2.6",
   "description": "This is a frontend dependency for Craftable. Craftable is a Laravel-based open-source toolkit for building administration interfaces.",
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "js": "babel src/js --presets babel-preset-es2015 --out-dir dist/js",
@@ -45,5 +45,10 @@
     "cpx": "^1.5.0",
     "node-sass": "^4.10.0",
     "postcss-cli": "^6.0.1"
-  }
+  },
+  "files": [
+    "/dist",
+    "/scss",
+    "/coreui"
+  ]
 }
