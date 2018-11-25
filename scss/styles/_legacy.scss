@@ -1,0 +1,27 @@
+.input-group-addon {
+    display: flex;
+    box-align: center;
+    align-items: center;
+    padding: .5rem .75rem;
+    margin-bottom: 0;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.25;
+    color: #3e515b;
+    text-align: center;
+    border: 1px solid #c2cfd6;
+    min-width: 40px;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #fff;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    &:last-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    &:not(:last-child) {
+        border-right: 0;
+    }
+    
+}
