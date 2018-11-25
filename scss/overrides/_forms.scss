@@ -15,11 +15,11 @@
 }
 
 .has-success .form-control {
-  background-image: url('../coreui/img/correct.png');
+  background-image: url('../img/correct.png');
 }
 
 .has-danger .form-control {
-  background-image: url('../coreui/img/error.png');
+  background-image: url('../img/error.png');
   border-color: $danger;
 }
 
@@ -68,12 +68,12 @@ label {
 
 .input-icon--mail {
   width: 20px;
-  background-image: url('../coreui/img/envelope.png');
+  background-image: url('../img/envelope.png');
 }
 
 .input-icon--lock {
   margin: 0 3px;
-  background-image: url('../coreui/img/lock.png');
+  background-image: url('../img/lock.png');
 }
 
 .form-control::placeholder {
