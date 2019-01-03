@@ -45,7 +45,7 @@
 }
 
 @each $color, $value in $theme-colors {
-  &#{if(&, "&", "*")}.callout-#{$color} {
+  #{if(&, "&", "*")}.callout-#{$color} {
     border-left-color: $value;
 
     h4 {
