@@ -199,7 +199,7 @@ const BaseForm = {
                   data,
                   trumbowyg.o.plugins.upload.urlPropertyName.split('.')
                 );
-                trumbowyg.execCmd('insertImage', url);
+                trumbowyg.execCmd('insertImage', url, false, true);
                 var $img = $(
                   'img[src="' + url + '"]:not([alt])',
                   trumbowyg.$box
