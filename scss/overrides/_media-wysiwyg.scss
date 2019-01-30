@@ -1,0 +1,111 @@
+// Write (or import) your styles here
+.trumbowyg-editor table.table td {
+  min-width: unset;
+  display: table-cell;
+}
+
+div.trumbowyg-button-pane {
+  background: #ffffff;
+  border-bottom: 1px solid $mutedText;
+  .trumbowyg-button-group::after {
+    background: rgba(0, 0, 0, 0);
+  }
+}
+div.trumbowyg-box {
+  border: 1px solid $mutedText;
+  &:after {
+    content: '';
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 10px;
+    top: 45px;
+    background-position: center;
+  }
+}
+
+div.trumbowyg-modal-box {
+  .trumbowyg-modal-button {
+    border-radius: 4px;
+    &.trumbowyg-modal-submit {
+      background: $success;
+      &:hover, &:focus {
+        background: darken($success, 10);
+      }
+      &:before {
+        content: '\f00c';
+        font-family: FontAwesome;
+        padding-right: 5px;
+        font-size: 14px;
+      }
+    }
+    &.trumbowyg-modal-reset {
+      background: #fbfbfb;
+      &:hover, &:focus {
+        background: #e6e6e6;
+      }
+      &:before {
+        content: '\f00d';
+        font-family: FontAwesome;
+        padding-right: 5px;
+        font-size: 14px;
+      }
+    }
+
+  }
+  label {
+    overflow: visible;
+    .trumbowyg-input-infos span {
+      color: #555;
+      background: white;
+      border: none;
+    }
+    input {
+      border: 1px solid $mutedText;
+      &:hover, &:focus {
+        border: 1px solid $mutedText;
+        background: white;
+      }
+      &[type="file"] {
+        height: 38px;
+        padding-top: 2px;
+        padding-left: 2px;
+      }
+    }
+  }
+  .trumbowyg-modal-title {
+    background: white;
+  }
+
+}
+
+div.trumbowyg-dropdown button:hover, .trumbowyg-dropdown button:focus {
+  background: rgba(185, 200, 222, 0.18);
+}
+
+div.trumbowyg-dropdown-table table td.active {
+  background-color: $success;
+}
+
+.has-danger {
+  div.trumbowyg-box {
+    border: 1px solid $danger;
+    &:after {
+      background-image: url('../../../img/error.png');
+    }
+  }
+}
+
+.has-success {
+  div.trumbowyg-box {
+    &:after {
+      background-image: url('../../../img/correct.png');
+    }
+  }
+}
+
+.wysiwyg-noembed iframe {
+  pointer-events: none;
+}
