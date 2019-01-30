@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 import BaseListing from '../base-components/Listing/BaseListing';
 
 Vue.component('translation-listing', {
