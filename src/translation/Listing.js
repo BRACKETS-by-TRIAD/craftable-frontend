@@ -13,7 +13,7 @@ Vue.component('translation-listing', {
                 return 'All groups';
             }
         },
-        stepcount: {
+        stepCount: {
             type: Number,
             default: function(){
                 return 3;
@@ -29,18 +29,18 @@ Vue.component('translation-listing', {
             importLanguage: '',
             file: null,
             onlyMissing: false,
-            currentstep: 1,
+            currentStep: 1,
             scanning: false,
             filters: {
                 group: null
             },
             translationId: null,
             translationDefault: '',
-            numberOfSuccessfullyImportedLanguages: 0,
-            numberOfSuccessfullyUpdatedLanguages: 0,
+            numberOfSuccessfullyImportedTranslations: 0,
+            numberOfSuccessfullyUpdatedTranslations: 0,
             numberOfFoundTranslations: 0,
             numberOfTranslationsToReview: 0,
-            conflicts: null,
+            translationsToImport: null,
             translations: {},
             importedFile: null,
         }
@@ -51,7 +51,7 @@ Vue.component('translation-listing', {
             return this.filters.group === null ? this.label : this.filters.group;
         },
         lastStep() {
-            return this.currentstep === this.stepcount;
+            return this.currentStep === this.stepCount;
         }
     },
 
@@ -91,7 +91,7 @@ Vue.component('translation-listing', {
         },
 
         nextStep(){
-            if(this.currentstep === 1){
+            if(this.currentStep === 1){
                 return this.$validator.validateAll()
                     .then(result => {
                         if (!result) {
@@ -112,28 +112,33 @@ Vue.component('translation-listing', {
                             }
                         }).then(response => {
                             if(response.data.hasOwnProperty('numberOfImportedTranslations') && response.data.hasOwnProperty('numberOfUpdatedTranslations')){
-                                this.currentstep = 3;
-                                this.numberOfSuccessfullyImportedLanguages = response.data.numberOfImportedTranslations;
-                                this.numberOfSuccessfullyUpdatedLanguages = response.data.numberOfUpdatedTranslations;
+                                this.currentStep = 3;
+                                this.numberOfSuccessfullyImportedTranslations = response.data.numberOfImportedTranslations;
+                                this.numberOfSuccessfullyUpdatedTranslations= response.data.numberOfUpdatedTranslations;
                                 this.loadData();
                             } else {
-                                this.currentstep = 2;
+                                this.currentStep = 2;
                                 this.numberOfFoundTranslations = Object.keys(response.data).length;
-                                this.conflicts = response.data;
+                                this.translationsToImport = response.data;
 
-                                for(let i = 0; i < this.conflicts.length; i++){
-                                    if(this.conflicts[i].hasOwnProperty('has_conflict')){
-                                        if(this.conflicts[i].has_conflict) {
+                                for(let i = 0; i < this.translationsToImport.length; i++){
+                                    if(this.translationsToImport[i].hasOwnProperty('has_conflict')){
+                                        if(this.translationsToImport[i].has_conflict) {
                                             this.numberOfTranslationsToReview++;
                                         }
                                     }
                                 }
                             }
                         }, error => {
-                            this.$notify({ type: 'error', title: 'Error!', text: 'An error has occured.'});
+                            if(error.response.data === "Wrong syntax in your import")
+                                this.$notify({ type: 'error', title: 'Error!', text: 'Wrong syntax in your import.'});
+                            else if (error.response.data === "Unsupported file type")
+                                this.$notify({ type: 'error', title: 'Error!', text: 'Unsupported file type.'});
+                            else
+                                this.$notify({ type: 'error', title: 'Error!', text: 'An error has occured.'});
                         });
                     });
-            } else if(this.currentstep === 2){
+            } else if(this.currentStep === 2){
                 return this.$validator.validateAll()
                     .then(result => {
                         if (!result) {
@@ -141,10 +146,10 @@ Vue.component('translation-listing', {
                             return false;
                         }
 
-                        for(let i = 0; i < this.conflicts.length; i++){
-                            if(this.conflicts[i].hasOwnProperty('checkedCurrent')){
-                                if(this.conflicts[i].checkedCurrent) {
-                                    this.conflicts[i][this.importLanguage.toLowerCase()] = this.conflicts[i].current_value;
+                        for(let i = 0; i < this.translationsToImport.length; i++){
+                            if(this.translationsToImport[i].hasOwnProperty('checkedCurrent')){
+                                if(this.translationsToImport[i].checkedCurrent) {
+                                    this.translationsToImport[i][this.importLanguage.toLowerCase()] = this.translationsToImport[i].current_value;
                                 }
                             }
                         }
@@ -152,13 +157,13 @@ Vue.component('translation-listing', {
                         let url = '/admin/translations/import/conflicts';
                         let data = {
                             importLanguage: this.importLanguage,
-                            resolved_translations: this.conflicts
+                            resolvedTranslations: this.translationsToImport
                         };
 
                         axios.post(url, data).then(response => {
-                            this.currentstep = 3;
-                            this.numberOfSuccessfullyImportedLanguages = response.data.numberOfImportedTranslations;
-                            this.numberOfSuccessfullyUpdatedLanguages = response.data.numberOfUpdatedTranslations;
+                            this.currentStep = 3;
+                            this.numberOfSuccessfullyImportedTranslations = response.data.numberOfImportedTranslations;
+                            this.numberOfSuccessfullyUpdatedTranslations= response.data.numberOfUpdatedTranslations;
                             this.loadData();
                         }, error => {
                             this.$notify({ type: 'error', title: 'Error!', text: 'An error has occured.'});
@@ -168,7 +173,7 @@ Vue.component('translation-listing', {
         },
 
         previousStep(){
-            this.currentstep--;
+            this.currentStep--;
         },
 
         beforeModalOpen ({params}) {
