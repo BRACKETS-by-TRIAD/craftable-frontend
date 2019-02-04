@@ -140,6 +140,55 @@
     top: 5px;
 }
 
+.dropdown-menu {
+    .dropdown-item-label {
+        display: block;
+        width: 100%;
+
+        clear: both;
+        font-weight: normal;
+        color: #151b1e;
+        text-align: inherit;
+        white-space: nowrap;
+        background: none;
+        border: 0;
+
+        position: relative;
+        border-bottom: 1px solid #F0F2F4;
+        label {
+            width: 100%;
+            padding: 10px 20px;
+            padding-left: 40px;
+            margin: 0;
+
+            &:before {
+                left: 10px;
+                top: 10px;
+            }
+
+            &:after {
+                top: 15px;
+                left: 15px;
+            }
+        }
+    }
+
+    .btn.btn-primary {
+        text-align: center;
+        color: white;
+        border-radius: 0;
+    }
+}
+
+.translations-export {
+    position: absolute;
+}
+
+.tranlations-export-dropdown {
+    position: relative !important;
+    left: -15px !important;
+}
+
 @media (max-width: 991px) {
     .avatar-initials {
         display: none;

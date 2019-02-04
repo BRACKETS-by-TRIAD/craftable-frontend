@@ -2,6 +2,16 @@ import Vue from 'vue';
 
 import BaseListing from '../base-components/Listing/BaseListing';
 
+$(document).ready(function($){
+    $(document).on('click', '.hm', function (e) {
+        $(this).closest('.show').removeClass('show');
+    });
+
+    $(document).on('click', '.dropdown-menu.dropdown-menu-dont-auto-close', function (e) {
+        e.stopPropagation();
+    });
+});
+
 Vue.component('translation-listing', {
 
     mixins: [BaseListing],
@@ -24,15 +34,15 @@ Vue.component('translation-listing', {
     data(){
         return {
             templateChecked: false,
-            exportLanguage: '',
-            templateLanguage: '',
+            exportMultiselect: {},
+            languagesToExport: [],
             importLanguage: '',
             file: null,
             onlyMissing: false,
             currentStep: 1,
             scanning: false,
             filters: {
-                group: null
+                group: null,
             },
             translationId: null,
             translationDefault: '',
@@ -45,7 +55,20 @@ Vue.component('translation-listing', {
             importedFile: null,
         }
     },
+    watch: {
+        exportMultiselect: {
+            handler(newVal, oldVal) {
+                this.languagesToExport = [];
 
+                Object.keys(newVal).forEach(key => {
+                    if(newVal[key]) {
+                        this.languagesToExport.push(key);
+                    }
+                });
+            },
+            deep: true
+        },
+    },
     computed: {
         filteredGroup() {
             return this.filters.group === null ? this.label : this.filters.group;
@@ -207,9 +230,9 @@ Vue.component('translation-listing', {
                     }
 
                     let data = {
-                        exportLanguage: this.exportLanguage,
-                        templateLanguage: this.templateLanguage
+                        exportLanguages: this.languagesToExport,
                     };
+
                     let url = '/admin/translations/export?' + $.param(data);
                     this.$modal.hide('edit-translation');
                     window.location = url;
