@@ -3,7 +3,7 @@ import Vue from 'vue';
 import BaseListing from '../base-components/Listing/BaseListing';
 
 $(document).ready(function($){
-    $(document).on('click', '.hm', function (e) {
+    $(document).on('click', '.close_button', function (e) {
         $(this).closest('.show').removeClass('show');
     });
 
@@ -28,14 +28,19 @@ Vue.component('translation-listing', {
             default: function(){
                 return 3;
             }
-        }
+        },
+        locales: {}
     },
 
     data(){
+        let exportMultiselect = {};
+        Object.values(this.locales).forEach(value => {
+            exportMultiselect[value] = true;
+        });
         return {
             templateChecked: false,
-            exportMultiselect: {},
-            languagesToExport: [],
+            exportMultiselect,
+            languagesToExport: this.locales,
             importLanguage: '',
             file: null,
             onlyMissing: false,
@@ -66,7 +71,7 @@ Vue.component('translation-listing', {
                     }
                 });
             },
-            deep: true
+            deep: true,
         },
     },
     computed: {
@@ -77,7 +82,6 @@ Vue.component('translation-listing', {
             return this.currentStep === this.stepCount;
         }
     },
-
     methods: {
         rescan(url) {
             this.scanning = true;
@@ -234,13 +238,20 @@ Vue.component('translation-listing', {
                     };
 
                     let url = '/admin/translations/export?' + $.param(data);
-                    this.$modal.hide('edit-translation');
                     window.location = url;
+                    this.$modal.hide('export-translation');
                 });
         },
         handleImportFileUpload(e){
             this.file = this.$refs.file.files[0];
             this.importedFile = e.target.files[0];
+        },
+        onCloseImportModal() {
+            this.currentStep = 1;
+            this.importedFile = '';
+            this.importLanguage = '';
+            this.onlyMissing = false;
+            this.translationsToImport = null;
         }
     }
 });

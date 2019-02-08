@@ -109,19 +109,15 @@
     opacity: 0;
 }
 
-.file-field .file-path-wrapper {
+.file-field .btn-primary {
+    height: 33px;
     overflow: hidden;
-    padding-left: 10px;
-    height: 2.5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.file-field input.file-path {
-    width: 100%;
-    height: 30px;
-    border-bottom: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
+.file-field span {
+    line-height: 2.0;
 }
 
 .form-check-label {
@@ -138,6 +134,24 @@
     vertical-align: top;
     position: relative;
     top: 5px;
+}
+
+.import-checkbox {
+    padding-left: 5px;
+}
+
+.import-footer {
+    border: none;
+}
+
+.translations-export {
+    margin-left: 15px;
+}
+
+.tranlations-export-dropdown {
+    position: relative !important;
+    left: -14px !important;
+    top: -36px !important;
 }
 
 .dropdown-menu {
@@ -178,15 +192,6 @@
         color: white;
         border-radius: 0;
     }
-}
-
-.translations-export {
-    position: absolute;
-}
-
-.tranlations-export-dropdown {
-    position: relative !important;
-    left: -15px !important;
 }
 
 @media (max-width: 991px) {
