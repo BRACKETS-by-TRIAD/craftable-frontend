@@ -84,6 +84,78 @@
     margin-right: 5px;
 }
 
+.avatar-upload {
+    display: inline-block;
+    .vue-dropzone.dropzone {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border-radius: 200px;
+        background: #B0C4DA;
+        color: white;
+        overflow: hidden;
+
+        &:hover {
+            background-color: #4273FA;
+        }
+
+
+        .dz-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+
+            .dz-image img + p {
+                display: none;
+            }
+        }
+
+        .dz-details {
+            .dz-size, .dz-filename{
+                display: none !important;
+            }
+        }
+
+        .dz-error-message {
+            display: none !important;
+        }
+
+        .dz-error-mark {
+            top: 20% !important;
+        }
+
+        .dz-remove {
+            width: 60% !important;
+            height: 40px !important;
+            bottom: 40px !important;
+            top: auto !important;
+            left: 20% !important;
+            right: 20% !important;
+            margin: 0 !important;
+        }
+
+        .dz-message,.dz-message * {
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+        i {
+            color: white !important;
+        }
+    }
+}
+
+.avatar-photo {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    margin: 0;
+}
+
 .fa-spinner {
     animation: spin 1s linear infinite;
 }
