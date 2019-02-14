@@ -1,6 +1,6 @@
 {
   "name": "craftable",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "description": "This is a frontend dependency for Craftable. Craftable is a Laravel-based open-source toolkit for building administration interfaces.",
   "main": "./dist/js/index.js",
   "scripts": {
