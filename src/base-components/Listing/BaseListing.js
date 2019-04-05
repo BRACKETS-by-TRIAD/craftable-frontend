@@ -1,6 +1,13 @@
 import moment from 'moment';
 import Pagination from './components/Pagination';
 import Sortable from './components/Sortable';
+import { VTooltip, VPopover, VClosePopover } from 'v-tooltip';
+import UserDetailTooltip from './components/UserDetailTooltip';
+
+Vue.directive('tooltip', VTooltip);
+Vue.directive('close-popover', VClosePopover);
+Vue.component('v-popover', VPopover);
+
 
 export default {
     data: function() {
@@ -40,7 +47,8 @@ export default {
     },
     components: {
        'pagination': Pagination,
-       'sortable': Sortable
+       'sortable': Sortable,
+       'user-detail-tooltip': UserDetailTooltip
     },
 
     created: function() {
