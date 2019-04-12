@@ -27,7 +27,7 @@ template:`
 
 			<div class="user-info">
 				<h3>{{ user.full_name }} <small v-if="userText">| <strong style="text-transform: uppercase">{{ userText }}</strong></small></h3>
-				<a v-if="user.email" href="mailto:user.email">{{ user.email }}</a>
+				<a v-if="user.email" v-bind:href="['mailto:' + user.email]">{{ user.email }}</a>
 
 				<slot></slot>
 			</div>
