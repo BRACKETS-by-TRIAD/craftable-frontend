@@ -4,3 +4,7 @@ This is a frontend dependency of [Craftable](https://github.com/BRACKETS-by-TRIA
 ![Craftable administration area example](https://docs.getcraftable.com/assets/posts-crud.png)
 
 Find out more here: https://www.getcraftable.com/
+
+## Issues
+Where do I report issues?
+If something is not working as expected, please open an issue in the main repository https://github.com/BRACKETS-by-TRIAD/craftable.

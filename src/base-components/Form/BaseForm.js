@@ -14,8 +14,6 @@ import '../../overrides/trumbowyg.reupload';
 import '../../overrides/trumbowyg.edit-embed-template';
 Vue.component('wysiwyg', VueTrumbowyg);
 
-const userLanguage = document.documentElement.lang;
-
 const BaseForm = {
   props: {
     action: {
@@ -85,12 +83,7 @@ const BaseForm = {
         dateFormat: 'Y-m-d H:i:S',
         altInput: true,
         altFormat: 'd.m.Y',
-        locale:
-          userLanguage === 'en'
-            ? null
-            : require('flatpickr/dist/l10n/' + userLanguage + '.js')[
-                userLanguage
-              ]
+        locale: null
       },
       timePickerConfig: {
         enableTime: true,
@@ -100,12 +93,7 @@ const BaseForm = {
         dateFormat: 'H:i:S',
         altInput: true,
         altFormat: 'H:i:S',
-        locale:
-          userLanguage === 'en'
-            ? null
-            : require('flatpickr/dist/l10n/' + userLanguage + '.js')[
-                userLanguage
-              ]
+        locale: null
       },
       datetimePickerConfig: {
         enableTime: true,
@@ -114,12 +102,7 @@ const BaseForm = {
         dateFormat: 'Y-m-d H:i:S',
         altInput: true,
         altFormat: 'd.m.Y H:i:S',
-        locale:
-          userLanguage === 'en'
-            ? null
-            : require('flatpickr/dist/l10n/' + userLanguage + '.js')[
-                userLanguage
-              ]
+        locale: null
       },
       wysiwygConfig: {
         placeholder: 'Type a text here',
