@@ -15,10 +15,9 @@ template:`
 
 		<div class="avatar-full-name" v-if="options.showFullNameLabel">
 			{{ user.full_name }}
-			<span v-if="edit">
+			<span v-if="edit && datetime != ''">
 			    <br>
-			    <span v-if="createdByAdminUser"">{{user.created_at}}</span>
-			    <span v-if="updatedByAdminUser">{{user.updated_at}}</span>
+			    <span>{{datetime}}</span>
 			</span>
 		</div>
 
@@ -77,18 +76,7 @@ template:`
                 return false;
             }
         },
-        createdByAdminUser: {
-            type: Boolean,
-            default: function () {
-                return false;
-            }
-        },
-        updatedByAdminUser: {
-            type: Boolean,
-            default: function () {
-                return false;
-            }
-        }
+        datetime: ''
 	},
 	computed: {
 		abbr() {

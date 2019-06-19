@@ -1,4 +1,5 @@
 import './bootstrap';
+import moment from 'moment';
 import VueTrumbowyg from 'vue-trumbowyg';
 import 'trumbowyg/dist/ui/trumbowyg.css';
 import 'trumbowyg/dist/plugins/colors/trumbowyg.colors';
@@ -255,7 +256,21 @@ const BaseForm = {
       });
     }
   },
-
+  filters: {
+      date: function (date, format = 'YYYY-MM-DD') {
+          var date = moment(date);
+          return date.isValid() ? date.format(format) : "";
+      },
+      datetime: function (datetime, format = 'YYYY-MM-DD HH:mm:ss') {
+          var date = moment(datetime);
+          return date.isValid() ? date.format(format) : "";
+      },
+      time: function (time, format = 'HH:mm:ss') {
+          // '2000-01-01' is here just because momentjs needs a date
+          var date = moment('2000-01-01 ' + time);
+          return date.isValid() ? date.format(format) : "";
+      }
+  },
   methods: {
     getPostData() {
       if (this.mediaCollections) {
