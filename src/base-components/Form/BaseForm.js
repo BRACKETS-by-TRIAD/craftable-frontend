@@ -12,6 +12,7 @@ import 'trumbowyg/dist/plugins/table/trumbowyg.table.js';
 import '../../overrides/trumbowyg.template';
 import '../../overrides/trumbowyg.reupload';
 import '../../overrides/trumbowyg.edit-embed-template';
+import UserDetailTooltip from "../Listing/components/UserDetailTooltip";
 Vue.component('wysiwyg', VueTrumbowyg);
 
 const BaseForm = {
@@ -47,6 +48,9 @@ const BaseForm = {
       type: Number,
       default: 850
     }
+  },
+  components: {
+      'user-detail-tooltip': UserDetailTooltip
   },
 
   created: function() {
