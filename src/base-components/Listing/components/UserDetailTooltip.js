@@ -17,7 +17,7 @@ template:`
 			{{ user.full_name }}
 			<span v-if="edit && datetime != ''">
 			    <br>
-			    <span>{{datetime}}</span>
+			    <span class="user-info-span">{{datetime}}</span>
 			</span>
 		</div>
 
