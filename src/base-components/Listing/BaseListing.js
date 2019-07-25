@@ -3,6 +3,9 @@ import Pagination from './components/Pagination';
 import Sortable from './components/Sortable';
 import { VTooltip, VPopover, VClosePopover } from 'v-tooltip';
 import UserDetailTooltip from './components/UserDetailTooltip';
+import {pickBy} from "lodash";
+import {keys} from "lodash";
+
 
 Vue.directive('tooltip', VTooltip);
 Vue.directive('close-popover', VClosePopover);
@@ -31,6 +34,9 @@ export default {
             filters: {},
             search: '',
             collection: null,
+            bulkItems: {},
+            isClickedAll: false,
+            bulkCheckingAll: false
         }
     },
     props: {
@@ -49,6 +55,15 @@ export default {
        'pagination': Pagination,
        'sortable': Sortable,
        'user-detail-tooltip': UserDetailTooltip
+    },
+
+    watch: {
+      pagination: {
+          handler: function () {
+
+          },
+          deep: true
+      }
     },
 
     created: function() {
@@ -76,6 +91,86 @@ export default {
     },
 
     methods: {
+        onBulkItemClicked(id) {
+            this.bulkItems[id] === undefined ? Vue.set(this.bulkItems, id, true) : this.bulkItems[id] = !this.bulkItems[id];
+            this.checkIfClickedAll();
+        },
+
+        checkIfClickedAll() {
+            this.isClickedAll = (this.clickedBulkItemsCount() >= this.pagination.state.total) && (this.clickedBulkItemsCount() > 0);
+        },
+
+        clickedBulkItemsCount() {
+            return Object.values(this.bulkItems).filter(function (item) {
+                return item === true;
+            }).length;
+        },
+
+        onBulkItemsClickedAll(url) {
+            this.isClickedAll = !this.isClickedAll;
+
+            if(this.isClickedAll){
+                let options = {
+                    params: {
+                        bulk: true
+                    }
+                };
+
+                this.bulkCheckingAll = true;
+                Object.assign(options.params, this.filters);
+
+                axios.get(url, options).then(response => {
+                    this.checkAllItems(response.data.bulkItems);
+                    this.bulkCheckingAll = false;
+                }, error => {
+                    this.$notify({ type: 'error', title: 'Error!', text: error.response.data.message ? error.response.data.message : 'An error has occured.'});
+                });
+            } else {
+                this.onBulkItemsClickedAllUncheck();
+            }
+        },
+
+        checkAllItems(itemsToCheck) {
+            itemsToCheck.forEach((itemId) => {
+                Vue.set(this.bulkItems, itemId, true);
+            });
+        },
+
+        onBulkItemsClickedAllUncheck() {
+            this.isClickedAll = false;
+            this.bulkItems = {};
+        },
+
+        bulkDelete(url) {
+            let itemsToDelete = keys(pickBy(this.bulkItems));
+            let self = this;
+
+            this.$modal.show('dialog', {
+                title: 'Warning!',
+                text: `Do you really want to delete ${this.clickedBulkItemsCount()} selected items ?`,
+                buttons: [
+                    { title: 'No, cancel.' },
+                    {
+                        title: '<span class="btn-dialog btn-danger">Yes, delete.<span>',
+                        handler: () => {
+                            this.$modal.hide('dialog');
+                            axios.post(url, {
+                                data: {
+                                    'ids': itemsToDelete
+                                }
+                            }).then(response => {
+                                self.bulkItems = {};
+                                this.isClickedAll = false;
+                                this.loadData();
+                                this.$notify({ type: 'success', title: 'Success!', text: response.data.message ? response.data.message : 'Item successfully deleted.'});
+                            }, error => {
+                                this.$notify({ type: 'error', title: 'Error!', text: error.response.data.message ? error.response.data.message : 'An error has occured.'});
+                            });
+                        }
+                    }
+                ]
+            });
+        },
 
         loadData (resetCurrentPage) {
             let options = {
