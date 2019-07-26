@@ -60,7 +60,7 @@ export default {
     watch: {
       pagination: {
           handler: function () {
-
+              this.checkIfClickedAll();
           },
           deep: true
       }
