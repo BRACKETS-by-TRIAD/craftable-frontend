@@ -3,14 +3,11 @@ import Pagination from './components/Pagination';
 import Sortable from './components/Sortable';
 import { VTooltip, VPopover, VClosePopover } from 'v-tooltip';
 import UserDetailTooltip from './components/UserDetailTooltip';
-import {pickBy} from "lodash";
-import {keys} from "lodash";
-
+import {pickBy, keys} from 'lodash';
 
 Vue.directive('tooltip', VTooltip);
 Vue.directive('close-popover', VClosePopover);
 Vue.component('v-popover', VPopover);
-
 
 export default {
     data: function() {
@@ -34,9 +31,9 @@ export default {
             filters: {},
             search: '',
             collection: null,
-            bulkItems: {},
-            isClickedAll: false,
-            bulkCheckingAll: false
+            bulkItems : {},
+            bulkCheckingAllLoader: false,
+            dummy: null
         }
     },
     props: {
@@ -60,7 +57,7 @@ export default {
     watch: {
       pagination: {
           handler: function () {
-              this.checkIfClickedAll();
+              this.dummy = Math.random();
           },
           deep: true
       }
@@ -71,6 +68,21 @@ export default {
             this.populateCurrentStateAndData(this.data);
         } else {
             this.loadData();
+        }
+    },
+
+    computed: {
+        isClickedAll: {
+            get() {
+                const dummy = this.dummy; //we hack pagination watcher don't recalculate computed property
+                return (this.clickedBulkItemsCount >= this.pagination.state.total) && (this.clickedBulkItemsCount > 0);
+            },
+            set(clicked) {}
+        },
+        clickedBulkItemsCount() {
+            return Object.values(this.bulkItems).filter(function (item) {
+                return item === true;
+            }).length;
         }
     },
 
@@ -92,38 +104,27 @@ export default {
 
     methods: {
         onBulkItemClicked(id) {
-            this.bulkItems[id] === undefined ? Vue.set(this.bulkItems, id, true) : this.bulkItems[id] = !this.bulkItems[id];
-            this.checkIfClickedAll();
+            this.bulkItems[id] === undefined ? Vue.set(this.bulkItems, id, true) :  this.bulkItems[id] = !this.bulkItems[id];
         },
 
-        checkIfClickedAll() {
-            this.isClickedAll = (this.clickedBulkItemsCount() >= this.pagination.state.total) && (this.clickedBulkItemsCount() > 0);
-        },
-
-        clickedBulkItemsCount() {
-            return Object.values(this.bulkItems).filter(function (item) {
-                return item === true;
-            }).length;
-        },
 
         onBulkItemsClickedAll(url) {
-            this.isClickedAll = !this.isClickedAll;
-
-            if(this.isClickedAll){
+            if(!this.isClickedAll){
                 let options = {
                     params: {
                         bulk: true
                     }
                 };
 
-                this.bulkCheckingAll = true;
+                this.bulkCheckingAllLoader = true;
                 Object.assign(options.params, this.filters);
 
                 axios.get(url, options).then(response => {
                     this.checkAllItems(response.data.bulkItems);
-                    this.bulkCheckingAll = false;
                 }, error => {
                     this.$notify({ type: 'error', title: 'Error!', text: error.response.data.message ? error.response.data.message : 'An error has occured.'});
+                }).finally(() => {
+                    this.bulkCheckingAllLoader = false;
                 });
             } else {
                 this.onBulkItemsClickedAllUncheck();
@@ -137,7 +138,6 @@ export default {
         },
 
         onBulkItemsClickedAllUncheck() {
-            this.isClickedAll = false;
             this.bulkItems = {};
         },
 
@@ -160,7 +160,6 @@ export default {
                                 }
                             }).then(response => {
                                 self.bulkItems = {};
-                                this.isClickedAll = false;
                                 this.loadData();
                                 this.$notify({ type: 'success', title: 'Success!', text: response.data.message ? response.data.message : 'Item successfully deleted.'});
                             }, error => {
