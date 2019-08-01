@@ -75,15 +75,15 @@ export default {
         isClickedAll: {
             get() {
                 const dummy = this.dummy; //we hack pagination watcher don't recalculate computed property
-                return (this.clickedBulkItemsCount >= this.pagination.state.total) && (this.clickedBulkItemsCount > 0);
+                return (this.clickedBulkItemsCount >= this.pagination.state.to) && (this.clickedBulkItemsCount > 0) && (this.allClickedItemsAreSame());
             },
             set(clicked) {}
         },
         clickedBulkItemsCount() {
-            return Object.values(this.bulkItems).filter(function (item) {
+            return Object.values(this.bulkItems).filter((item) => {
                 return item === true;
             }).length;
-        }
+        },
     },
 
     filters: {
@@ -103,31 +103,51 @@ export default {
     },
 
     methods: {
-        onBulkItemClicked(id) {
-            this.bulkItems[id] === undefined ? Vue.set(this.bulkItems, id, true) :  this.bulkItems[id] = !this.bulkItems[id];
+        allClickedItemsAreSame() {
+            let itemsInPaginationIds = Object.values(this.collection).map(({id}) => id);
+
+            //for loop is used because you can't return false in .forEach() method
+            for(let i = 0; i < itemsInPaginationIds.length; i++){
+                let itemInPaginationId = itemsInPaginationIds[i];
+                if((this.bulkItems[itemInPaginationId] === undefined) || (this.bulkItems[itemInPaginationId] === false)){
+                    return false;
+                }
+            }
+
+            return true;
         },
 
+        onBulkItemClicked(id) {
+            this.bulkItems[id] === undefined ? Vue.set(this.bulkItems, id, true) : this.bulkItems[id] = !this.bulkItems[id];
+        },
 
         onBulkItemsClickedAll(url) {
-            if(!this.isClickedAll){
-                let options = {
-                    params: {
-                        bulk: true
-                    }
-                };
+            let options = {
+                params: {
+                    bulk: true
+                }
+            };
 
+            this.bulkCheckingAllLoader = true;
+            Object.assign(options.params, this.filters);
+
+            axios.get('/admin/articles', options).then(response => {
+                this.checkAllItems(response.data.bulkItems);
+            }, error => {
+                this.$notify({ type: 'error', title: 'Error!', text: error.response.data.message ? error.response.data.message : 'An error has occured.'});
+            }).finally(() => {
+                this.bulkCheckingAllLoader = false;
+            });
+        },
+
+        onBulkItemsClickedAllWithPagination() {
+            let itemsInPagination = Object.values(this.collection).map(({id}) => id);
+            if(!this.isClickedAll) {
                 this.bulkCheckingAllLoader = true;
-                Object.assign(options.params, this.filters);
-
-                axios.get(url, options).then(response => {
-                    this.checkAllItems(response.data.bulkItems);
-                }, error => {
-                    this.$notify({ type: 'error', title: 'Error!', text: error.response.data.message ? error.response.data.message : 'An error has occured.'});
-                }).finally(() => {
-                    this.bulkCheckingAllLoader = false;
-                });
+                this.checkAllItems(itemsInPagination);
+                this.bulkCheckingAllLoader = false;
             } else {
-                this.onBulkItemsClickedAllUncheck();
+                this.onBulkItemsClickedAllUncheck(itemsInPagination);
             }
         },
 
@@ -137,8 +157,14 @@ export default {
             });
         },
 
-        onBulkItemsClickedAllUncheck() {
-            this.bulkItems = {};
+        onBulkItemsClickedAllUncheck(bulkItemsToUncheck = null) {
+            if(bulkItemsToUncheck === null){
+                this.bulkItems = {};
+            } else {
+                Object.values(this.collection).map(({id}) => id).forEach((itemsInPaginationIds) => {
+                    this.bulkItems[itemsInPaginationIds] = false;
+                });
+            }
         },
 
         bulkDelete(url) {
