@@ -75,7 +75,7 @@ export default {
         isClickedAll: {
             get() {
                 const dummy = this.dummy; //we hack pagination watcher don't recalculate computed property
-                return (this.clickedBulkItemsCount >= ((this.pagination.state.to - this.pagination.state.from) + 1)) && (this.clickedBulkItemsCount > 0) && (this.clickedAllItemsAreSame());
+                return (this.clickedBulkItemsCount >= ((this.pagination.state.to - this.pagination.state.from) + 1)) && (this.clickedBulkItemsCount > 0) && (this.allClickedItemsAreSame());
             },
             set(clicked) {}
         },
