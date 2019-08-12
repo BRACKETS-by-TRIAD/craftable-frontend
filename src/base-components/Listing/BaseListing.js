@@ -108,7 +108,7 @@ export default {
 
             //for loop is used because you can't return false in .forEach() method
             for(let i = 0; i < itemsInPaginationIds.length; i++){
-                let itemInPaginationId = itemsInPaginationIds[i];
+                const itemInPaginationId = itemsInPaginationIds[i];
                 if((this.bulkItems[itemInPaginationId] === undefined) || (this.bulkItems[itemInPaginationId] === false)){
                     return false;
                 }
@@ -122,7 +122,7 @@ export default {
         },
 
         onBulkItemsClickedAll(url) {
-            let options = {
+            const options = {
                 params: {
                     bulk: true
                 }
@@ -169,7 +169,7 @@ export default {
 
         bulkDelete(url) {
             const itemsToDelete = keys(pickBy(this.bulkItems));
-            let self = this;
+            const self = this;
 
             this.$modal.show('dialog', {
                 title: 'Warning!',
