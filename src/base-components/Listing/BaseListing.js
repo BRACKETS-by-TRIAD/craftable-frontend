@@ -104,7 +104,7 @@ export default {
 
     methods: {
         allClickedItemsAreSame() {
-            let itemsInPaginationIds = Object.values(this.collection).map(({id}) => id);
+            const itemsInPaginationIds = Object.values(this.collection).map(({id}) => id);
 
             //for loop is used because you can't return false in .forEach() method
             for(let i = 0; i < itemsInPaginationIds.length; i++){
@@ -141,7 +141,7 @@ export default {
         },
 
         onBulkItemsClickedAllWithPagination() {
-            let itemsInPagination = Object.values(this.collection).map(({id}) => id);
+            const itemsInPagination = Object.values(this.collection).map(({id}) => id);
             if(!this.isClickedAll) {
                 this.bulkCheckingAllLoader = true;
                 this.checkAllItems(itemsInPagination);
@@ -168,7 +168,7 @@ export default {
         },
 
         bulkDelete(url) {
-            let itemsToDelete = keys(pickBy(this.bulkItems));
+            const itemsToDelete = keys(pickBy(this.bulkItems));
             let self = this;
 
             this.$modal.show('dialog', {
