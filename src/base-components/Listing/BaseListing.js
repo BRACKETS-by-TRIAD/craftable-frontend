@@ -173,7 +173,7 @@ export default {
 
             this.$modal.show('dialog', {
                 title: 'Warning!',
-                text: `Do you really want to delete ${this.clickedBulkItemsCount()} selected items ?`,
+                text: `Do you really want to delete ${this.clickedBulkItemsCount} selected items ?`,
                 buttons: [
                     { title: 'No, cancel.' },
                     {
