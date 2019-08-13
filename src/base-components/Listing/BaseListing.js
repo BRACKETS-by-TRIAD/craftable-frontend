@@ -141,7 +141,6 @@ export default {
         },
 
         onBulkItemsClickedAllWithPagination() {
-            console.log(this.collection);
             const itemsInPagination = Object.values(this.collection).map(({id}) => id);
             if(!this.isClickedAll) {
                 this.bulkCheckingAllLoader = true;
@@ -153,7 +152,6 @@ export default {
         },
 
         checkAllItems(itemsToCheck) {
-            console.log(itemsToCheck);
             itemsToCheck.forEach((itemId) => {
                 Vue.set(this.bulkItems, itemId, true);
             });
