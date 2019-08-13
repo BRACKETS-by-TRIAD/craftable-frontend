@@ -131,7 +131,7 @@ export default {
             this.bulkCheckingAllLoader = true;
             Object.assign(options.params, this.filters);
 
-            axios.get('/admin/articles', options).then(response => {
+            axios.get(url, options).then(response => {
                 this.checkAllItems(response.data.bulkItems);
             }, error => {
                 this.$notify({ type: 'error', title: 'Error!', text: error.response.data.message ? error.response.data.message : 'An error has occured.'});
@@ -141,6 +141,7 @@ export default {
         },
 
         onBulkItemsClickedAllWithPagination() {
+            console.log(this.collection);
             const itemsInPagination = Object.values(this.collection).map(({id}) => id);
             if(!this.isClickedAll) {
                 this.bulkCheckingAllLoader = true;
@@ -152,6 +153,7 @@ export default {
         },
 
         checkAllItems(itemsToCheck) {
+            console.log(itemsToCheck);
             itemsToCheck.forEach((itemId) => {
                 Vue.set(this.bulkItems, itemId, true);
             });
