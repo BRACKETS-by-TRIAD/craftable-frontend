@@ -232,20 +232,44 @@ export default {
             });
         },
 
-        setPublishingDates: function publishLater(url,row) {
+        unpublishNow: function unpublishNow(url,row,additionalWarning) {
             var _this = this;
-            var dialogType = 'setPublishingDatesDialog';
+            var dialogType = 'unpublishNowDialog';
+
+            this.$modal.show('dialog', {
+                title: _this.trans[dialogType].title,
+                text: _this.trans[dialogType].text+(additionalWarning ? '<br /><span class="text-danger">'+additionalWarning+'</span>' : ''),
+                buttons: [{ title: _this.trans[dialogType].no }, {
+                    title: '<span class="btn-dialog btn-danger">'+_this.trans[dialogType].yes+'<span>',
+                    handler: function handler() {
+                        _this.$modal.hide('dialog');
+
+                        axios.post(url, { unpublish_now: true }).then(function (response) {
+                            row.published_at = response.data.object.published_at;
+                            row.published_to = response.data.object.published_to;
+                            _this.$notify({ type: 'success', title: 'Success!', text: response.data.message ? response.data.message : _this.trans[dialogType].success });
+                        }, function (error) {
+
+                            _this.$notify({ type: 'error', title: 'Error!', text: error.response.data.message ? error.response.data.message : _this.trans[dialogType].error });
+                        });
+                    }
+                }]
+            });
+        },
+
+        publishLater: function publishLater(url,row,dialogType) {
+            var _this = this;
+            if (!dialogType) dialogType = 'publishLaterDialog';
 
             this.$modal.show({
                 template: `
-                    <div class="vue-dialog setPublishingDatesDialog">
+                    <div class="vue-dialog">
                         <div class="card-body">
                             <p>{{ trans.text }}</p>
-                            <div class="form-group row align-items-start">
+                            <div class="form-group row align-items-center">
                                 <div class="col">
-                                    <label>{{ trans.from }}</label>
                                     <datetime 
-                                        ref="published_at" 
+                                        
                                         v-model="mutablePublishedAt"
                                         :config="datetimePickerConfig" 
                                         v-validate="'date_format:yyyy-MM-dd HH:mm:ss'" 
@@ -253,48 +277,33 @@ export default {
                                         >
                                     </datetime>
                                 </div>
-                                <div class="col">
-                                    <label>{{ trans.to }}</label>
-                                    <datetime 
-                                        v-model="mutablePublishedTo"
-                                        :config="datetimePickerConfig" 
-                                        v-validate="'date_format:yyyy-MM-dd HH:mm:ss|after:published_at'"
-                                        class="flatpickr" 
-                                        >
-                                    </datetime>
-                                </div>
                             </div>
-                            <div class="row offset-md-3 col-md-6">
-
-
-                                <div class="col col-md-6">
+                            <div class="row">
+                                <div class="col">
                                     <button class="col btn btn-secondary" @click="$emit('close')">{{trans.no}}</button>                            
                                 </div>
-                                <div class="col col-md-6">
-                                    <button class="col btn btn-success" type="button" @click="save(mutablePublishedAt,mutablePublishedTo)">{{trans.yes}}</button>
+                                <div class="col">
+                                    <button class="col btn btn-success" type="button" @click="save(mutablePublishedAt)">{{trans.yes}}</button>
                                 </div>
                             </div>
                         </div>                
                     </div>                
                 `,
-                props: ['trans', 'published_at', 'published_to', 'datetimePickerConfig', 'save'],
+                props: ['trans', 'published_at', 'datetimePickerConfig', 'save'],
                 data() {
                     return {
-                        mutablePublishedAt: row.published_at,
-                        mutablePublishedTo: row.published_to
+                        mutablePublishedAt: row.published_at
                     }
                 },
             }, {
                 published_at: row.published_at,
-                published_to: row.published_to,
                 datetimePickerConfig: _this.datetimePickerConfig,
                 trans: _this.trans[dialogType],
-                save: function save(mutablePublishedAt, mutablePublishedTo){
-                    _this.$modal.hide('SetPublishingDatesDialog');
+                save: function save(mutablePublishedAt){
+                    _this.$modal.hide('PublishLaterDialog');
 
-                    axios.post(url, { published_at: mutablePublishedAt, published_to: mutablePublishedTo }).then(function (response) {
+                    axios.post(url, { published_at: mutablePublishedAt }).then(function (response) {
                         row.published_at = response.data.object.published_at;
-                        row.published_to = response.data.object.published_to;
                         _this.$notify({ type: 'success', title: 'Success!', text: response.data.message ? response.data.message : _this.trans[dialogType].success });
                     }, function (error) {
 
@@ -303,9 +312,9 @@ export default {
                 },
 
             }, {
-                width: 700,
+                width: 350,
                 height: 'auto',
-                name: 'SetPublishingDatesDialog'
+                name: 'PublishLaterDialog'
             });
         },
     }
