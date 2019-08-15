@@ -15,6 +15,10 @@ template:`
 
 		<div class="avatar-full-name" v-if="options.showFullNameLabel">
 			{{ user.full_name }}
+			<span v-if="edit && datetime != ''">
+			    <br>
+			    <span class="user-info-span">{{datetime}}</span>
+			</span>
 		</div>
 
 		<template slot="popover">
@@ -66,6 +70,13 @@ template:`
                 return 'top';
 			}
 		},
+        edit: {
+            type: Boolean,
+            default: function () {
+                return false;
+            }
+        },
+        datetime: ''
 	},
 	computed: {
 		abbr() {
