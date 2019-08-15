@@ -579,26 +579,26 @@
     color: #536c79;
     font-size: 0.8rem;
     margin: 5px 0 0 0;
+}
 
-    .bulk-checkbox {
-        width: 1%;
-        white-space: nowrap;
-    }
+.bulk-checkbox {
+    width: 1%;
+    white-space: nowrap;
+}
 
-    .bulk-info {
-        margin-bottom: 0.5rem;
-        margin-top: 0.5rem;
-    }
+.bulk-info {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
 
-    .bulk-checkbox label {
-        display: inline !important;
-    }
+.bulk-checkbox label {
+    display: inline !important;
+}
 
-    .bg-bulk {
-        background: #edf3fe;
-    }
+.bg-bulk {
+    background: #edf3fe;
+}
 
-    .bg-bulk-info {
-        background: $mutedText;
-    }
+.bg-bulk-info {
+    background: $mutedText;
 }
