@@ -318,7 +318,7 @@ const BaseForm = {
         axios
           .post(this.action, this.getPostData())
           .then(response => this.onSuccess(response.data))
-          .catch(errors => this.onFail(errors.response.data.errors));
+          .catch(errors => this.onFail(errors.response.data));
       });
     },
     onSuccess(data) {
@@ -327,30 +327,39 @@ const BaseForm = {
         window.location.replace(data.redirect);
       }
     },
-    onFail(errors) {
+    onFail(data) {
       this.submiting = false;
-      var bag = this.$validator.errors;
-      bag.clear();
-      Object.keys(errors).map(key => {
-        var splitted = key.split('.', 2);
-        // we assume that first dot divides column and locale (TODO maybe refactor this and make it more general)
-        if (splitted.length > 1) {
-          bag.add({
-            field: splitted[0] + '_' + splitted[1],
-            msg: errors[key][0]
-          });
-        } else {
-          bag.add({
-            field: key,
-            msg: errors[key][0]
+      if(typeof data.errors !== typeof undefined) {
+        var bag = this.$validator.errors;
+        bag.clear();
+        Object.keys(data.errors).map(key => {
+          var splitted = key.split('.', 2);
+          // we assume that first dot divides column and locale (TODO maybe refactor this and make it more general)
+          if (splitted.length > 1) {
+            bag.add({
+              field: splitted[0] + '_' + splitted[1],
+              msg: data.errors[key][0]
+            });
+          } else {
+            bag.add({
+              field: key,
+              msg: data.errors[key][0]
+            });
+          }
+        });
+        if (typeof data.message === typeof undefined) {
+          this.$notify({
+            type: 'error',
+            title: 'Error!',
+            text: 'The form contains invalid fields.'
           });
         }
-      });
-      if (errors) {
+      }
+      if (typeof data.message !== typeof undefined) {
         this.$notify({
           type: 'error',
           title: 'Error!',
-          text: 'The form contains invalid fields.'
+          text: data.message
         });
       }
     },
