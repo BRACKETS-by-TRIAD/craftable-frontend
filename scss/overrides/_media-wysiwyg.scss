@@ -93,7 +93,7 @@ div.trumbowyg-dropdown-table table td.active {
   div.trumbowyg-box {
     border: 1px solid $danger;
     &:after {
-      background-image: url('../../../img/error.png');
+      background-image: $icon-error;
     }
   }
 }
@@ -101,7 +101,7 @@ div.trumbowyg-dropdown-table table td.active {
 .has-success {
   div.trumbowyg-box {
     &:after {
-      background-image: url('../../../img/correct.png');
+      background-image: $icon-correct;
     }
   }
 }
