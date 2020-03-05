@@ -73,7 +73,7 @@
 }
 
 .localization-error {
-    background-image: url('../../../img/error-triangle.png');
+    background-image: $icon-error-triangle;
     position: relative;
     top: 6px;
     background-size: contain;

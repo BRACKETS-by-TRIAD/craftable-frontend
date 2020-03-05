@@ -54,9 +54,9 @@
 }
 
 .has-success .ql-editor:after {
-  background-image: url('../../../img/correct.png');
+  background-image: $icon-correct;
 }
 
 .has-danger .ql-editor:after {
-  background-image: url('../../../img/error.png');
+  background-image: $icon-error;
 }
