@@ -1,4 +1,4 @@
-import dropzone from 'vue2-dropzone';
+import dropzone from 'vue2-dropzone'
 
 const BaseUpload = {
   components: {
@@ -7,43 +7,45 @@ const BaseUpload = {
   props: {
     url: {
       type: String,
-      required: true
+      required: true,
     },
     collection: {
-    	type: String,
-      required: true
+      type: String,
+      required: true,
     },
-    maxNumberOfFiles:{
+    maxNumberOfFiles: {
       type: Number,
       required: false,
-      default: 1
+      default: 1,
     },
-    maxFileSizeInMb:{
+    maxFileSizeInMb: {
       type: Number,
       required: false,
-      default: 2
+      default: 2,
     },
     acceptedFileTypes: {
       type: String,
-      required: false
+      required: false,
     },
     thumbnailWidth: {
       type: Number,
       required: false,
-      default: 200
+      default: 200,
     },
-    uploadedImages : {
+    uploadedImages: {
       type: Array,
       required: false,
-      default: function () { return [] }
+      default: () => [],
     },
   },
-  data: function () { 
+  data() {
     return {
       mutableUploadedImages: this.uploadedImages,
       headers: {
-        'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').getAttribute('content')
-      }
+        'X-CSRF-TOKEN': document.head
+          .querySelector('meta[name="csrf-token"]')
+          .getAttribute('content'),
+      },
     }
   },
   template: `<dropzone :id="collection" 
@@ -63,135 +65,171 @@ const BaseUpload = {
                 
                 <input type="hidden" name="collection" :value="collection">
             </dropzone>`,
-  mounted: function () {     
-    this.attachAlreadyUploadedMedia();
+  mounted() {
+    this.attachAlreadyUploadedMedia()
   },
   methods: {
-    onSuccess: function (file, response) {
-      if(!file.type.includes('image')) {
-        setTimeout(function() {
-            //FIXME jquery
-            $(file.previewElement).removeClass('dz-file-preview');
-        }, 3000);
+    onSuccess(file, response) {
+      if (!file.type.includes('image')) {
+        setTimeout(function () {
+          document
+            .querySelector(file.previewElement)
+            .classList.remove('dz-file-preview')
+        }, 3000)
       }
     },
 
-    onUploadError: function (file, error) {
-      let errorMessage = typeof error == 'string' ? error : error.message;
-      this.$notify({ type: 'error', title: 'Error!', text: errorMessage});
-      $(file.previewElement).find('.dz-error-message span').text(errorMessage);
+    onUploadError(file, error) {
+      const errorMessage = typeof error === 'string' ? error : error.message
+      this.$notify({ type: 'error', title: 'Error!', text: errorMessage })
+      const preview = document.querySelector(file.previewElement)
+      preview.querySelector('.dz-error-message span').textContent = errorMessage
     },
 
-    onFileAdded: function(file) {
-      this.placeIcon(file);
+    onFileAdded(file) {
+      this.placeIcon(file)
     },
 
-    onFileDelete: function (file, error, xhr) {
-      var deletedFileIndex = _.findIndex(this.mutableUploadedImages, {url: file.url});
-      if(this.mutableUploadedImages[deletedFileIndex]) {
-        this.mutableUploadedImages[deletedFileIndex]['deleted'] = true;
+    onFileDelete(file, error, xhr) {
+      const deletedFileIndex = _.findIndex(this.mutableUploadedImages, {
+        url: file.url,
+      })
+      if (this.mutableUploadedImages[deletedFileIndex]) {
+        this.mutableUploadedImages[deletedFileIndex].deleted = true
 
-        //dontSubstractMaxFiles fix
-        var currentMax = this.$refs[this.collection].dropzone.options.maxFiles;
-        this.$refs[this.collection].setOption('maxFiles', currentMax + 1);
+        // dontSubstractMaxFiles fix
+        const currentMax = this.$refs[this.collection].dropzone.options.maxFiles
+        this.$refs[this.collection].setOption('maxFiles', currentMax + 1)
       }
     },
 
-    attachAlreadyUploadedMedia: function() {
-      this.$nextTick( () => {
-        if(this.mutableUploadedImages) {
-          _.each(this.mutableUploadedImages, (file, key) => {
-
-            this.$refs[this.collection].manuallyAddFile({ name: file['name'], 
-                                                          size: file['size'], 
-                                                          type: file['type'], 
-                                                          url: file['url'],
-                                                        }, 
-                                                        file['thumb_url'], 
-                                                        false,
-                                                        false,
-                                                        {
-                                                          dontSubstractMaxFiles: false,
-                                                          addToFiles: true
-                                                        });
-          });
-        } 
+    attachAlreadyUploadedMedia() {
+      this.$nextTick(() => {
+        if (this.mutableUploadedImages) {
+          this.mutableUploadedImages.forEach((file, key) => {
+            this.$refs[this.collection].manuallyAddFile(
+              {
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                url: file.url,
+              },
+              file.thumb_url,
+              false,
+              false,
+              {
+                dontSubstractMaxFiles: false,
+                addToFiles: true,
+              }
+            )
+          })
+        }
       })
     },
 
-    getFiles: function() {
-      var files = []; 
+    getFiles() {
+      const files = []
 
-      _.each(this.mutableUploadedImages, (file, key) => {
-        if(file.deleted) {
+      this.mutableUploadedImages.forEach((file, key) => {
+        if (file.deleted) {
           files.push({
-              id: file.id,
-              collection_name: this.collection,
-              action: 'delete',
-          });
+            id: file.id,
+            collection_name: this.collection,
+            action: 'delete',
+          })
         }
-      });
+      })
 
-      _.each(this.$refs[this.collection].getAcceptedFiles(), (file, key) => {
-        var response = JSON.parse(file.xhr.response);
+      this.$refs[this.collection].getAcceptedFiles().forEach((file, key) => {
+        const response = JSON.parse(file.xhr.response)
 
-        if(response.path) {
+        if (response.path) {
           files.push({
-              id: file.id,
-              collection_name: this.collection,
-              path: response.path,
-              action: file.deleted ? 'delete' : 'add', //TODO: update ie. meta_data.name
-              meta_data: {
-                name: file.name,  //TODO: editable in the future
-                file_name: file.name,
-                width: file.width,
-                height: file.height,
-              }
-          });
+            id: file.id,
+            collection_name: this.collection,
+            path: response.path,
+            action: file.deleted ? 'delete' : 'add', // TODO: update ie. meta_data.name
+            meta_data: {
+              name: file.name, // TODO: editable in the future
+              file_name: file.name,
+              width: file.width,
+              height: file.height,
+            },
+          })
         }
-      });
+      })
 
-    	return files;
+      return files
     },
 
-    placeIcon: function(file) {
-      //FIXME cele to je jqueryoidne, asi si budeme musiet spravit vlastny vue wrapper, tento je zbugovany
-      var $previewElement = $(file.previewElement);
+    placeIcon(file) {
+      const previewElement = document.querySelector(file.previewElement)
 
-      if(file.url) {
-        $previewElement.find('.dz-filename').html('<a href="'+file.url+'" target="_BLANK" class="dz-btn dz-custom-download">'+file.name+'</a>');
+      if (file.url) {
+        previewElement
+          .querySelector('.dz-filename')
+          .innerHTML(
+            '<a href="' +
+              file.url +
+              '" target="_BLANK" class="dz-btn dz-custom-download">' +
+              file.name +
+              '</a>'
+          )
       }
 
-      if(file.type.includes('image')) {
-        //nothing, default thumb
-      }
-      else if(file.type.includes('pdf')) {
-        $previewElement.find('.dz-image').html('<i class="fa fa-file-pdf-o"></i><p>'+file.name+'</p>');
-      }
-      else if(file.type.includes('word')) {
-        $previewElement.find('.dz-image').html('<i class="fa fa-file-word-o"></i><p>'+file.name+'</p>');
-      }
-      else if(file.type.includes('spreadsheet') || file.type.includes('csv')) {
-        $previewElement.find('.dz-image').html('<i class="fa fa-file-excel-o"></i><p>'+file.name+'</p>');
-      }
-      else if(file.type.includes('presentation')) {
-        $previewElement.find('.dz-image').html('<i class="fa fa-file-powerpoint-o"></i><p>'+file.name+'</p>');
-      }
-      else if(file.type.includes('video')) {
-        $previewElement.find('.dz-image').html('<i class="fa fa-file-video-o"></i><p>'+file.name+'</p>');
-      }
-      else if(file.type.includes('text')) {
-        $previewElement.find('.dz-image').html('<i class="fa fa-file-text-o"></i><p>'+file.name+'</p>');
-      }
-      else if(file.type.includes('zip') || file.type.includes('rar')) {
-        $previewElement.find('.dz-image').html('<i class="fa fa-file-archive-o"></i><p>'+file.name+'</p>');
-      }
-      else {
-        $previewElement.find('.dz-image').html('<i class="fa fa-file-o"></i><p>'+file.name+'</p>');
+      if (file.type.includes('image')) {
+        // nothing, default thumb
+      } else if (file.type.includes('pdf')) {
+        previewElement
+          .querySelector('.dz-image')
+          .innerHTML('<i class="fa fa-file-pdf-o"></i><p>' + file.name + '</p>')
+      } else if (file.type.includes('word')) {
+        previewElement
+          .querySelector('.dz-image')
+          .innerHTML(
+            '<i class="fa fa-file-word-o"></i><p>' + file.name + '</p>'
+          )
+      } else if (
+        file.type.includes('spreadsheet') ||
+        file.type.includes('csv')
+      ) {
+        previewElement
+          .querySelector('.dz-image')
+          .innerHTML(
+            '<i class="fa fa-file-excel-o"></i><p>' + file.name + '</p>'
+          )
+      } else if (file.type.includes('presentation')) {
+        previewElement
+          .querySelector('.dz-image')
+          .innerHTML(
+            '<i class="fa fa-file-powerpoint-o"></i><p>' + file.name + '</p>'
+          )
+      } else if (file.type.includes('video')) {
+        previewElement
+          .querySelector('.dz-image')
+          .innerHTML(
+            '<i class="fa fa-file-video-o"></i><p>' + file.name + '</p>'
+          )
+      } else if (file.type.includes('text')) {
+        previewElement
+          .querySelector('.dz-image')
+          .innerHTML(
+            '<i class="fa fa-file-text-o"></i><p>' + file.name + '</p>'
+          )
+      } else if (file.type.includes('zip') || file.type.includes('rar')) {
+        previewElement
+          .querySelector('.dz-image')
+          .innerHTML(
+            '<i class="fa fa-file-archive-o"></i><p>' + file.name + '</p>'
+          )
+      } else {
+        previewElement
+          .querySelector('.dz-image')
+          .innerHTML('<i class="fa fa-file-o"></i><p>' + file.name + '</p>')
       }
     },
 
-    template: function() {
+    template() {
       return `
               <div class="dz-preview dz-file-preview">
                   <div class="dz-image">
@@ -206,9 +244,9 @@ const BaseUpload = {
                   <div class="dz-success-mark"><i class="fa fa-check"></i></div>
                   <div class="dz-error-mark"><i class="fa fa-close"></i></div>
               </div>
-          `;
-    }
-  }
+          `
+    },
+  },
 }
 
-export default BaseUpload;
+export default BaseUpload
