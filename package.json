@@ -52,7 +52,7 @@
     "cpx": "^1.5.0",
     "node-sass": "^4.14.1",
     "postcss-cli": "^8.3.1",
-    "postcss": "^8.0.0"
+    "postcss": "^8.1.2"
   },
   "files": [
     "/dist",
