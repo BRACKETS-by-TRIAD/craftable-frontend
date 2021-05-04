@@ -30,6 +30,7 @@
     "moment-timezone": "^0.5.26",
     "perfect-scrollbar": "^1.4.0",
     "popper.js": "^1.14.5",
+    "qs": "^6.10.1",
     "simple-line-icons": "^2.4.1",
     "trumbowyg": "^2.10.0",
     "v-tooltip": "^2.0.0-rc.33",

@@ -4,7 +4,8 @@ import Pagination from './components/Pagination';
 import Sortable from './components/Sortable';
 import { VTooltip, VPopover, VClosePopover } from 'v-tooltip';
 import UserDetailTooltip from './components/UserDetailTooltip';
-import {pickBy, keys} from 'lodash';
+import {pickBy, keys, map} from 'lodash';
+const qs = require('qs');
 
 Vue.directive('tooltip', VTooltip);
 Vue.directive('close-popover', VClosePopover);
@@ -111,11 +112,13 @@ export default {
     },
 
     created: function() {
-        if (this.data != null){
-            this.populateCurrentStateAndData(this.data);
-        } else {
+        // FIXME: support for data loaded from backend?
+        // if (this.data != null){
+        //     this.populateCurrentStateAndData(this.data);
+        // } else {
+            this.setParamsFromUrl();
             this.loadData();
-        }
+        // }
 
         var _this = this;
         setInterval(function(){
@@ -252,7 +255,7 @@ export default {
         loadData (resetCurrentPage) {
             let options = {
                 params: {
-                    per_page: this.pagination.state.per_page,
+                    per_page: this.pagination.state.per_page || 10,
                     page: this.pagination.state.current_page,
                     orderBy: this.orderBy.column,
                     orderDirection: this.orderBy.direction,
@@ -265,19 +268,25 @@ export default {
 
             Object.assign(options.params, this.filters);
 
+            console.log({options});
             axios.get(this.url, options).then(response => this.populateCurrentStateAndData(response.data.data), error => {
                 // TODO handle error
             });
+
+            this.updateUrl(options.params);
         },
 
-        filter(column, value) {
+        //FIXME: filter can be called by child listing components on create to set default filters
+        filter(column, value, loadData = true) {
             if (value == '') {
                 delete this.filters[column];
             } else {
                 this.filters[column] = value;
             }
             // when we change filter, we must reset pagination, because the total items count may has changed
-            this.loadData(true);
+            if(loadData) {
+                this.loadData(true);
+            }
         },
 
         populateCurrentStateAndData(object) {
@@ -287,7 +296,7 @@ export default {
                 this.loadData();
                 return ;
             }
-
+            
             this.collection = object.data;
             this.pagination.state.current_page = object.current_page;
             this.pagination.state.last_page = object.last_page;
@@ -295,6 +304,33 @@ export default {
             this.pagination.state.per_page = object.per_page;
             this.pagination.state.to = object.to;
             this.pagination.state.from = object.from;
+        },
+
+        updateUrl(params) {
+            if (window.history.pushState) { 
+                const url = `${this.url}?${qs.stringify(params, {skipNulls: true})}`;
+                window.history.pushState('Page', 'Title', url);
+            }
+        },
+
+        setParamsFromUrl() {
+            // const params = this.groupParamsByKey(new URLSearchParams(location.search));
+            const params = qs.parse(location.search, { ignoreQueryPrefix: true });
+
+            // populate pagination data
+            this.pagination.state.current_page = params.page;
+            this.pagination.state.per_page = params.per_page;
+
+            // populate ordering data
+            this.orderBy.column = params.orderBy;
+            this.orderBy.direction = params.orderDirection;
+
+            // populate filter data
+            map(this.filters, (filter, key) => {
+                if(params[key]) {
+                    this.filter(key, params[key], false);
+                }
+            });
         },
 
         deleteItem(url){
