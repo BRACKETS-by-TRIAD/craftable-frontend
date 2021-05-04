@@ -112,7 +112,7 @@ export default {
     },
 
     created: function() {
-        // FIXME: support for data loaded from backend?
+        // FIXME: support for data loaded from backend/without ajax?
         // if (this.data != null){
         //     this.populateCurrentStateAndData(this.data);
         // } else {
@@ -313,7 +313,6 @@ export default {
         },
 
         setParamsFromUrl() {
-            // const params = this.groupParamsByKey(new URLSearchParams(location.search));
             const params = qs.parse(location.search, { ignoreQueryPrefix: true });
 
             // populate pagination data
