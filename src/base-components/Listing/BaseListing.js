@@ -268,7 +268,6 @@ export default {
 
             Object.assign(options.params, this.filters);
 
-            console.log({options});
             axios.get(this.url, options).then(response => this.populateCurrentStateAndData(response.data.data), error => {
                 // TODO handle error
             });
