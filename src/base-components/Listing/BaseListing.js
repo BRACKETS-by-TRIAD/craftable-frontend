@@ -112,13 +112,12 @@ export default {
     },
 
     created: function() {
-        // FIXME: support for data loaded from backend/without ajax?
-        // if (this.data != null){
-        //     this.populateCurrentStateAndData(this.data);
-        // } else {
+        if (this.data != null){
+            this.populateCurrentStateAndData(this.data);
+        } else {
             this.setParamsFromUrl();
             this.loadData();
-        // }
+        }
 
         var _this = this;
         setInterval(function(){
