@@ -123,6 +123,12 @@ export default {
         setInterval(function(){
             _this.now = moment().tz(_this.timezone).format('YYYY-MM-DD HH:mm:ss');
         }, 1000);
+
+        window.onpopstate = function(event) {
+            // const params = event.state;
+            _this.setParamsFromUrl();
+            _this.loadData(false, false);
+        };
     },
 
     computed: {
@@ -251,7 +257,7 @@ export default {
             });
         },
 
-        loadData (resetCurrentPage) {
+        loadData (resetCurrentPage, updateUrl = true) {
             let options = {
                 params: {
                     per_page: this.pagination.state.per_page || 10,
@@ -271,7 +277,9 @@ export default {
                 // TODO handle error
             });
 
-            this.updateUrl(options.params);
+            if(updateUrl) {
+                this.updateUrl(options.params);
+            }
         },
 
         //FIXME: filter can be called by child listing components on create to set default filters
@@ -307,7 +315,7 @@ export default {
         updateUrl(params) {
             if (window.history.pushState) { 
                 const url = `${this.url}?${qs.stringify(params, {skipNulls: true})}`;
-                window.history.pushState('Page', 'Title', url);
+                window.history.pushState(params, 'Page', url);
             }
         },
 
