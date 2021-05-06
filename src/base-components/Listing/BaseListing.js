@@ -295,16 +295,15 @@ export default {
         },
 
         //FIXME: filter can be called by child listing components on create to set default filters
-        filter(column, value, loadData = true) {
+        filter(column, value) {
             if (value == '') {
                 delete this.filters[column];
             } else {
                 this.filters[column] = value;
             }
             // when we change filter, we must reset pagination, because the total items count may has changed
-            if(loadData) {
-                this.loadData(true);
-            }
+ 
+            this.loadData(true);
         },
 
         populateCurrentStateAndData(object) {
@@ -351,15 +350,37 @@ export default {
             // populate filter data
             map(this.filters, (filter, key) => {
                 if(params[key]) {
-                    this.filter(key, params[key], false);
+                    this.filters[key] = params[key];
+                } else {
+                    this.filters[key] = this.getDefaultEmptyValue(this.filters[key])
                 }
             });
 
             // populate the search field
             if(params.search) {
                 this.search = params.search;
-                this.filter('search', params.search, false);
+                this.filters['search'] = params.search
             }
+        },
+
+        getDefaultEmptyValue(variable) {
+            if(variable === null) {
+                return null;
+            }
+
+            if(typeof variable === 'object') {
+                if(variable.constructor.name === 'Array') {
+                    return [];
+                }
+
+                return {};
+            } 
+
+            if(typeof variable === 'boolean') {
+                return false;
+            }
+
+            return null;
         },
 
         updateFiltersInChildComponents(filters) {
