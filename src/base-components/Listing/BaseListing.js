@@ -114,6 +114,7 @@ export default {
     created: function() {
         if (this.data != null){
             this.populateCurrentStateAndData(this.data);
+            this.setParamsFromUrl(); // update possible filters from url
         } else {
             this.setParamsFromUrl();
             this.loadData();
@@ -336,6 +337,11 @@ export default {
                     this.filter(key, params[key], false);
                 }
             });
+
+            // populate the search field
+            if(params.search) {
+                this.search = params.search;
+            }
         },
 
         deleteItem(url){
