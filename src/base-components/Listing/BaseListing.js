@@ -132,10 +132,13 @@ export default {
             _this.now = moment().tz(_this.timezone).format('YYYY-MM-DD HH:mm:ss');
         }, 1000);
 
+        this.updateFiltersInChildComponents(this.filters);
+
         window.onpopstate = function(event) {
             if(_this.dynamicUrl) {
                 _this.setParamsFromUrl();
                 _this.loadData(false, false);
+                _this.updateFiltersInChildComponents(_this.filters);
             }
         };
     },
@@ -357,6 +360,10 @@ export default {
                 this.search = params.search;
                 this.filter('search', params.search, false);
             }
+        },
+
+        updateFiltersInChildComponents(filters) {
+            // function for child components to implement
         },
 
         deleteItem(url){
