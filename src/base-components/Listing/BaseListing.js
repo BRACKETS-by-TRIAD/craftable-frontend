@@ -54,6 +54,13 @@ export default {
            type: String,
            required: true
         },
+        'dynamicUrl': {
+            type: Boolean,
+            required: false,
+            default: function() {
+                return false;
+            }
+        },
         'data': {
            type: Object,
            default: function() {
@@ -114,7 +121,7 @@ export default {
     created: function() {
         if (this.data != null){
             this.populateCurrentStateAndData(this.data);
-            this.setParamsFromUrl(); // update possible filters from url
+            this.setParamsFromUrl(false); // set filters&ordering from url (pagination is updated in populateCurrentStateAndData)
         } else {
             this.setParamsFromUrl();
             this.loadData();
@@ -126,9 +133,10 @@ export default {
         }, 1000);
 
         window.onpopstate = function(event) {
-            // const params = event.state;
-            _this.setParamsFromUrl();
-            _this.loadData(false, false);
+            if(_this.dynamicUrl) {
+                _this.setParamsFromUrl();
+                _this.loadData(false, false);
+            }
         };
     },
 
@@ -314,22 +322,28 @@ export default {
         },
 
         updateUrl(params) {
-            if (window.history.pushState) { 
+            if (window.history.pushState && this.dynamicUrl) { 
                 const url = `${this.url}?${qs.stringify(params, {skipNulls: true})}`;
                 window.history.pushState(params, 'Page', url);
             }
         },
 
-        setParamsFromUrl() {
+        setParamsFromUrl(updatePagination = true) {
+            if(!this.dynamicUrl) {
+                return;
+            }
+
             const params = qs.parse(location.search, { ignoreQueryPrefix: true });
 
             // populate pagination data
-            this.pagination.state.current_page = params.page;
-            this.pagination.state.per_page = params.per_page;
+            if(updatePagination) {
+                this.pagination.state.current_page = params.page ? parseInt(params.page) : 1;
+                this.pagination.state.per_page = params.per_page ? parseInt(params.per_page) : 10;
+            }
 
             // populate ordering data
-            this.orderBy.column = params.orderBy;
-            this.orderBy.direction = params.orderDirection;
+            this.orderBy.column = params.orderBy ? params.orderBy : 'id';
+            this.orderBy.direction = params.orderDirection ? params.orderDirection : 'asc';
 
             // populate filter data
             map(this.filters, (filter, key) => {
@@ -341,6 +355,7 @@ export default {
             // populate the search field
             if(params.search) {
                 this.search = params.search;
+                this.filter('search', params.search, false);
             }
         },
 
